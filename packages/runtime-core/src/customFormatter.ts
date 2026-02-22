@@ -28,13 +28,24 @@ export function initCustomFormatter(): void {
   const formatter = {
     __vue_custom_formatter: true,
     header(obj: unknown) {
-      // TODO also format ComponentPublicInstance & ctx.slots/attrs in setup
       if (!isObject(obj)) {
         return null
       }
 
-      if (obj.__isVue) {
-        return ['div', vueStyle, `VueInstance`]
+      if ((obj as any).__isVue) {
+        return [
+          'div',
+          vueStyle,
+          `VueInstance${
+            (obj as any).$
+              ? ` (${
+                  (obj as any).$.type.name ||
+                  (obj as any).$.type.__name ||
+                  'Anonymous'
+                })`
+              : ``
+          }`,
+        ]
       } else if (isRef(obj)) {
         // avoid tracking during debugger accessing
         pauseTracking()
@@ -85,7 +96,7 @@ export function initCustomFormatter(): void {
 
   function formatInstance(instance: ComponentInternalInstance) {
     const blocks = []
-    if (instance.type.props && instance.props) {
+    if (instance.props !== EMPTY_OBJ) {
       blocks.push(createInstanceBlock('props', toRaw(instance.props)))
     }
     if (instance.setupState !== EMPTY_OBJ) {
@@ -93,6 +104,12 @@ export function initCustomFormatter(): void {
     }
     if (instance.data !== EMPTY_OBJ) {
       blocks.push(createInstanceBlock('data', toRaw(instance.data)))
+    }
+    if (instance.attrs !== EMPTY_OBJ) {
+      blocks.push(createInstanceBlock('attrs', toRaw(instance.attrs)))
+    }
+    if (instance.slots !== EMPTY_OBJ) {
+      blocks.push(createInstanceBlock('slots', instance.slots))
     }
     const computed = extractKeys(instance, 'computed')
     if (computed) {

@@ -172,7 +172,7 @@ export function flushPreFlushCbs(
 
 export function flushPostFlushCbs(seen?: CountMap): void {
   if (pendingPostFlushCbs.length) {
-    const deduped = [...new Set(pendingPostFlushCbs)].sort(
+    const deduped = Array.from(new Set(pendingPostFlushCbs)).sort(
       (a, b) => getId(a) - getId(b),
     )
     pendingPostFlushCbs.length = 0

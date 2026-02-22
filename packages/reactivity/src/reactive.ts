@@ -356,8 +356,8 @@ export function isShallow(value: unknown): boolean {
  * @see {@link https://vuejs.org/api/reactivity-utilities.html#isproxy}
  */
 /*@__NO_SIDE_EFFECTS__*/
-export function isProxy(value: any): boolean {
-  return value ? !!value[ReactiveFlags.RAW] : false
+export function isProxy(value: unknown): boolean {
+  return value ? !!(value as any)[ReactiveFlags.RAW] : false
 }
 
 /**

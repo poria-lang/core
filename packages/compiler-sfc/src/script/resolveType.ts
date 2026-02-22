@@ -261,14 +261,11 @@ function innerResolveTypeElements(
               typeParameters,
             )
           }
-          if (
-            // @ts-expect-error
-            SupportedBuiltinsSet.has(typeName)
-          ) {
+          if ((SupportedBuiltinsSet as Set<string>).has(typeName)) {
             return resolveBuiltin(
               ctx,
               node,
-              typeName as any,
+              typeName as GetSetType<typeof SupportedBuiltinsSet>,
               scope,
               typeParameters,
             )
